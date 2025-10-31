@@ -1,0 +1,823 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Learn & Play — Fun Characters</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg1: #d2f8f9;
+    --bg2: #e8f0ff;
+    --card: #ffffff;
+    --accent: #ff7aa2;
+    --accent2:#00b4d8;
+    --muted:#6b7280;
+    --glass: rgba(255,255,255,0.65);
+    --radius:18px;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:"Poppins",system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+    background: linear-gradient(135deg,var(--bg1),var(--bg2));
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:22px;
+  }
+
+  .app {
+    width:100%;
+    max-width:1100px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.8), rgba(255,255,255,0.9));
+    border-radius:22px;
+    box-shadow: 0 12px 40px rgba(12, 24, 60, 0.12);
+    overflow:hidden;
+    display:grid;
+    grid-template-columns: 320px 1fr;
+    min-height:640px;
+  }
+
+  /* Sidebar */
+  .sidebar{
+    background: linear-gradient(180deg, rgba(255,255,255,0.7), rgba(255,255,255,0.6));
+    padding:18px;
+    border-right: 1px solid rgba(0,0,0,0.05);
+  }
+  .brand{
+    display:flex;
+    gap:12px;
+    align-items:center;
+  }
+  .logo{
+    width:62px;height:62px;border-radius:14px;
+    display:grid;place-items:center;font-size:32px;
+    background: conic-gradient(from 0deg, #ffd166,#ff7aa2,#8ecae6);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  }
+  .title{font-weight:700;font-size:18px}
+  .subtitle{color:var(--muted);font-size:13px;margin-top:4px}
+
+  .player-card{
+    margin-top:18px;padding:12px;border-radius:14px;background:var(--glass);
+    display:flex;gap:12px;align-items:center;
+  }
+  .avatar{
+    width:64px;height:64px;border-radius:12px;font-size:32px;
+    display:grid;place-items:center;background:white;
+    box-shadow: 0 6px 16px rgba(13,24,40,0.06);
+  }
+  .profile-info{flex:1}
+  .input-name{width:100%;padding:8px 10px;border-radius:10px;border:1px solid rgba(0,0,0,0.06);font-weight:600}
+  .btn{
+    display:inline-block;padding:10px 14px;border-radius:12px;background:var(--accent);color:white;border:none;
+    cursor:pointer;font-weight:700;margin-top:10px;
+  }
+  .nav{
+    margin-top:18px;display:flex;flex-direction:column;gap:8px;
+  }
+  .nav button{
+    text-align:left;padding:10px 12px;border-radius:10px;border:none;background:transparent;cursor:pointer;
+  }
+  .nav button.active{
+    background:linear-gradient(90deg,var(--accent),var(--accent2));
+    color:white;font-weight:700;box-shadow:0 6px 18px rgba(0,0,0,0.08);
+  }
+  .meta{
+    margin-top:18px;padding:12px;border-radius:12px;background:linear-gradient(180deg,#fff,#f8fbff);
+    font-size:14px;color:var(--muted);
+  }
+
+  /* Main area */
+  .main{
+    padding:22px;
+    display:flex;flex-direction:column;
+    gap:16px;
+  }
+
+  .top-row{
+    display:flex;justify-content:space-between;align-items:center;
+  }
+  .speech{
+    display:flex;gap:12px;align-items:center;
+  }
+  .character{
+    width:92px;height:92px;border-radius:16px;background:white;display:grid;place-items:center;font-size:40px;
+    box-shadow:0 10px 26px rgba(12,24,60,0.08);
+    transform-origin:center;
+    animation: float 3s ease-in-out infinite;
+  }
+  @keyframes float{
+    0%,100%{transform:translateY(0)}
+    50%{transform:translateY(-8px)}
+  }
+  .bubble{
+    background:linear-gradient(180deg,#fff,#fffbf2);
+    border-radius:12px;padding:12px 14px;border:2px solid rgba(0,0,0,0.03);
+    max-width:680px;font-weight:600;
+  }
+  .controls{display:flex;gap:8px;align-items:center}
+
+  .card{
+    background:var(--card);padding:16px;border-radius:14px;box-shadow:0 6px 18px rgba(12,24,60,0.06);
+  }
+
+  .game-grid{
+    display:grid;grid-template-columns: 1fr 1fr;gap:16px;align-items:start;
+  }
+
+  .game-area{
+    min-height:360px;display:flex;flex-direction:column;gap:12px;
+  }
+
+  .question{
+    font-weight:700;font-size:20px;margin:8px 0;
+  }
+
+  .options{display:flex;flex-wrap:wrap;gap:10px}
+  .option{
+    flex:1 1 calc(50% - 10px);padding:12px;border-radius:12px;border:2px solid rgba(0,0,0,0.06);
+    background:linear-gradient(180deg,#fff,#f3f9ff);cursor:pointer;font-weight:700;
+  }
+  .option:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,0.06)}
+
+  .small{font-size:13px;color:var(--muted)}
+  .score{font-weight:800;font-size:18px;color:var(--accent2)}
+
+  /* memory grid */
+  .grid{display:grid;grid-template-columns: repeat(4,1fr);gap:10px}
+  .card-tile{border-radius:10px;padding:18px;display:grid;place-items:center;font-size:28px;background:#f8fbff;cursor:pointer}
+  .hidden{background:linear-gradient(180deg,#ccd9ff,#dff3ff);color:transparent}
+
+  /* footer */
+  .footer{margin-top:auto;padding-top:10px;display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted)}
+
+  /* mobile */
+  @media (max-width:900px){
+    .app{grid-template-columns: 1fr;min-height:780px}
+    .sidebar{order:2}
+    .main{order:1}
+    .game-grid{grid-template-columns:1fr}
+  }
+
+  /* tiny helpers */
+  .muted{color:var(--muted)}
+  .success{background:linear-gradient(90deg,#a8ff78,#78ffd6)!important;color:#003}
+</style>
+</head>
+<body>
+  <div class="app" id="app">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo" aria-hidden>🎮</div>
+        <div>
+          <div class="title">Learn & Play</div>
+          <div class="subtitle">Games + Learning with Characters</div>
+        </div>
+      </div>
+
+      <div class="player-card card" id="playerCard">
+        <div style="display:flex;gap:12px;align-items:center">
+          <div class="avatar" id="avatar">🐼</div>
+          <div class="profile-info">
+            <input id="nameInput" class="input-name" placeholder="Enter your name" />
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <button class="btn" id="saveNameBtn">Save</button>
+              <button class="btn" id="resetBtn" style="background:#ef476f">Reset</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <nav class="nav card" aria-label="games menu" id="navMenu">
+        <button data-screen="home" class="active">🏠 Home</button>
+        <button data-screen="math">➕ Math Speed</button>
+        <button data-screen="vocab">🔤 Vocab Scramble</button>
+        <button data-screen="memory">🧠 Memory Match</button>
+        <button data-screen="leader">🏆 Leaderboard</button>
+      </nav>
+
+      <div class="meta card">
+        <div><strong>Progress</strong></div>
+        <div id="metaProgress" class="small">Play games to earn points!</div>
+      </div>
+
+      <div style="height:16px"></div>
+      <div style="text-align:center" class="small muted">Made with ❤️ for learners</div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+      <div class="top-row">
+        <div class="speech">
+          <div class="character" id="character">🐼</div>
+          <div class="bubble" id="speechText">Welcome! I'm Mini. Pick a game to start learning and earning points.</div>
+        </div>
+        <div class="controls">
+          <div class="small muted" style="margin-right:12px">Score: <span id="totalScore">0</span></div>
+          <button id="speakToggle" class="btn" style="background:#00b4d8">🔊 Voice</button>
+        </div>
+      </div>
+
+      <section class="game-grid">
+        <!-- Left column: games / content -->
+        <div>
+          <div id="screen" class="card game-area">
+            <!-- dynamic content -->
+            <div id="homeScreen">
+              <h2>Welcome to Learn & Play 🎉</h2>
+              <p class="small muted">Choose a game from the left. Each game teaches and tests your skills — math, vocabulary, and memory.</p>
+
+              <div style="display:flex;gap:12px;margin-top:12px;flex-wrap:wrap">
+                <button class="option" onclick="startGame('math')">Start Math Speed</button>
+                <button class="option" onclick="startGame('vocab')">Start Vocab Scramble</button>
+                <button class="option" onclick="startGame('memory')">Start Memory Match</button>
+              </div>
+
+              <div style="margin-top:16px" class="small muted">Tip: Save your name to personalize the experience.</div>
+            </div>
+
+            <!-- Math -->
+            <div id="mathScreen" style="display:none">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div>
+                  <div class="small muted">Game:</div>
+                  <div class="question">Math Speed — Solve as many as you can!</div>
+                </div>
+                <div style="text-align:right">
+                  <div class="small muted">Time left</div>
+                  <div id="mathTimer" class="score">30s</div>
+                </div>
+              </div>
+
+              <div class="card" style="margin-top:12px">
+                <div class="small muted">Question</div>
+                <div id="mathQ" class="question">4 + 3 = ?</div>
+                <div class="options" id="mathOptions"></div>
+                <div style="display:flex;gap:8px;margin-top:12px">
+                  <button class="btn" id="mathStartBtn" onclick="initMath()">Start</button>
+                  <button class="btn" onclick="endMath()" style="background:#ef476f">Stop</button>
+                </div>
+                <div style="margin-top:10px" class="small muted">Score this round: <span id="mathRoundScore">0</span></div>
+              </div>
+            </div>
+
+            <!-- Vocab -->
+            <div id="vocabScreen" style="display:none">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div>
+                  <div class="small muted">Game:</div>
+                  <div class="question">Vocab Scramble — Unscramble words</div>
+                </div>
+                <div style="text-align:right">
+                  <div class="small muted">Attempts left</div>
+                  <div id="vocabAttempts" class="score">3</div>
+                </div>
+              </div>
+
+              <div class="card" style="margin-top:12px">
+                <div class="small muted">Scrambled</div>
+                <div id="scrambled" class="question">__</div>
+
+                <input id="vocabInput" placeholder="Type the word here" style="width:100%;padding:10px;border-radius:10px;border:1px solid rgba(0,0,0,0.06);margin-top:8px" />
+                <div style="display:flex;gap:8px;margin-top:12px">
+                  <button class="btn" onclick="checkVocab()">Check</button>
+                  <button class="btn" style="background:#00b4d8" onclick="nextVocab()">Next</button>
+                </div>
+
+                <div style="margin-top:10px" class="small muted">Round score: <span id="vocabScore">0</span></div>
+              </div>
+            </div>
+
+            <!-- Memory -->
+            <div id="memoryScreen" style="display:none">
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div>
+                  <div class="small muted">Game:</div>
+                  <div class="question">Memory Match — find pairs</div>
+                </div>
+                <div style="text-align:right">
+                  <div class="small muted">Moves</div>
+                  <div id="memoryMoves" class="score">0</div>
+                </div>
+              </div>
+
+              <div class="card" style="margin-top:12px">
+                <div id="memoryGrid" class="grid"></div>
+                <div style="display:flex;gap:8px;margin-top:12px">
+                  <button class="btn" onclick="initMemory()">Restart</button>
+                  <button class="btn" onclick="shuffleMemory()" style="background:#00b4d8">Shuffle</button>
+                </div>
+                <div style="margin-top:10px" class="small muted">Round score: <span id="memoryScore">0</span></div>
+              </div>
+            </div>
+
+            <!-- Leaderboard -->
+            <div id="leaderScreen" style="display:none">
+              <h3>Leaderboard</h3>
+              <div id="leaderList" class="card" style="margin-top:12px;padding:12px"></div>
+              <div style="margin-top:12px" class="small muted">Scores saved locally in your browser.</div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Right column: tips/stats -->
+        <div>
+          <div class="card">
+            <h3>How it works</h3>
+            <p class="small muted">Each game teaches a skill: arithmetic speed, vocabulary, and memory. Earn points to level up — the character will cheer you on!</p>
+            <div style="margin-top:12px">
+              <div class="small muted">Session points</div>
+              <div style="font-size:28px;font-weight:800;color:var(--accent2)" id="sessionPoints">0</div>
+            </div>
+            <div style="margin-top:12px">
+              <div class="small muted">Achievements</div>
+              <div style="display:flex;gap:8px;margin-top:8px">
+                <div style="padding:8px;border-radius:10px;background:linear-gradient(90deg,#fff,#f1faff);font-weight:700">🧠 Memory Whiz</div>
+                <div style="padding:8px;border-radius:10px;background:linear-gradient(90deg,#fff,#fff7f3);font-weight:700">✏️ Word Explorer</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:12px">
+            <h4>Quick Tips</h4>
+            <ul style="margin:6px 0 0 18px;padding:0;color:var(--muted);font-size:14px">
+              <li>Save your name for personalized messages.</li>
+              <li>Try to finish rounds quickly for higher points.</li>
+              <li>Play daily to improve your progress.</li>
+            </ul>
+          </div>
+
+          <div class="card" style="margin-top:12px">
+            <h4>About Characters</h4>
+            <p class="small muted">Each subject has a friendly character. They give feedback and voice lines (if Voice is on).</p>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <div style="flex:1;padding:8px;border-radius:10px;background:linear-gradient(90deg,#fff,#eef9ff)">🦉 Lexi — Words</div>
+              <div style="flex:1;padding:8px;border-radius:10px;background:linear-gradient(90deg,#fff,#fff5f5)">🤖 Robo — Math</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="footer">
+        <div class="muted">Made by you — edit and expand freely.</div>
+        <div class="muted">Local data: <span id="dataHint">active</span></div>
+      </div>
+    </main>
+  </div>
+
+<script>
+/* ====== Data & State ====== */
+const state = {
+  name: localStorage.getItem('lp_name') || '',
+  totalScore: Number(localStorage.getItem('lp_total') || 0),
+  sessionPoints: 0,
+  speak: false,
+  currentScreen: 'home'
+};
+
+/* ====== UI refs ====== */
+const nameInput = document.getElementById('nameInput');
+const saveNameBtn = document.getElementById('saveNameBtn');
+const resetBtn = document.getElementById('resetBtn');
+const avatar = document.getElementById('avatar');
+const speechText = document.getElementById('speechText');
+const character = document.getElementById('character');
+const totalScoreEl = document.getElementById('totalScore');
+const sessionPointsEl = document.getElementById('sessionPoints');
+const dataHint = document.getElementById('dataHint');
+
+/* navigation */
+document.getElementById('navMenu').addEventListener('click', (e)=>{
+  if(e.target.matches('button')){
+    const screen = e.target.dataset.screen;
+    navigateTo(screen);
+    Array.from(document.querySelectorAll('#navMenu button')).forEach(b=>b.classList.remove('active'));
+    e.target.classList.add('active');
+  }
+});
+
+/* save name */
+nameInput.value = state.name;
+saveNameBtn.addEventListener('click', ()=>{
+  const n = nameInput.value.trim() || 'Player';
+  state.name = n;
+  localStorage.setItem('lp_name', n);
+  say(`Welcome ${n}! Let's learn and play.`);
+  updateProfileUI();
+});
+
+/* reset */
+resetBtn.addEventListener('click', ()=>{
+  if(confirm('Reset all saved data (scores & name)?')) {
+    localStorage.removeItem('lp_name');
+    localStorage.removeItem('lp_total');
+    localStorage.removeItem('lp_leader');
+    state.name = '';
+    state.totalScore = 0;
+    state.sessionPoints = 0;
+    nameInput.value = '';
+    updateAllUI();
+    say('All reset. Good fresh start!');
+  }
+});
+
+/* speak toggle */
+document.getElementById('speakToggle').addEventListener('click', ()=>{
+  state.speak = !state.speak;
+  document.getElementById('speakToggle').style.opacity = state.speak ? 1 : 0.8;
+  say(state.speak ? 'Voice activated' : 'Voice disabled');
+});
+
+/* small helper: TTS */
+function say(text){
+  speechText.textContent = text;
+  if(state.speak && 'speechSynthesis' in window){
+    const u = new SpeechSynthesisUtterance(text);
+    window.speechSynthesis.cancel();
+    u.rate = 1;
+    u.pitch = 1.1;
+    window.speechSynthesis.speak(u);
+  }
+}
+
+/* tiny sound using Web Audio */
+function tone(freq=440,dur=0.08){
+  try{
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.type='sine'; o.frequency.value=freq;
+    g.gain.value = 0.05;
+    o.start();
+    setTimeout(()=>{ o.stop(); ctx.close(); }, dur*1000);
+  }catch(e){}
+}
+
+/* update UI */
+function updateProfileUI(){
+  avatar.textContent = state.name ? state.name[0].toUpperCase() : '🐼';
+  document.getElementById('metaProgress').textContent = `${state.name || 'Guest'} • Total points: ${state.totalScore}`;
+  totalScoreEl.textContent = state.totalScore;
+  sessionPointsEl.textContent = state.sessionPoints;
+  dataHint.textContent = localStorage.getItem('lp_total') ? 'saved' : 'active';
+}
+function updateAllUI(){ updateProfileUI(); updateLeaderUI(); }
+
+/* navigation */
+function navigateTo(screen){
+  state.currentScreen = screen;
+  ['home','math','vocab','memory','leader'].forEach(s=>{
+    const el = document.getElementById(s + 'Screen');
+    if(el) el.style.display = (s===screen) ? '' : 'none';
+  });
+  if(screen === 'leader') updateLeaderUI();
+  if(screen === 'math') say('Welcome to Math Speed. Press Start when ready.');
+  if(screen === 'vocab') say('Vocab Scramble ready. Unscramble the word.');
+  if(screen === 'memory') say('Memory Match ready. Find the pairs!');
+}
+
+/* quick start via buttons */
+function startGame(g){
+  document.querySelector(`#navMenu button[data-screen="${g}"]`).click();
+}
+
+/* ====== Leaderboard (local) ====== */
+function saveScore(game, score){
+  const leader = JSON.parse(localStorage.getItem('lp_leader')||'{}');
+  if(!leader[game]) leader[game] = [];
+  leader[game].push({name: state.name || 'Player', score, date: new Date().toISOString()});
+  // keep top 10
+  leader[game].sort((a,b)=>b.score-a.score);
+  leader[game] = leader[game].slice(0,10);
+  localStorage.setItem('lp_leader', JSON.stringify(leader));
+}
+function updateLeaderUI(){
+  const leaderList = document.getElementById('leaderList');
+  const leader = JSON.parse(localStorage.getItem('lp_leader')||'{}');
+  leaderList.innerHTML = '';
+  const games = ['math','vocab','memory'];
+  games.forEach(g=>{
+    const block = document.createElement('div');
+    block.style.marginBottom='10px';
+    block.innerHTML = `<strong style="text-transform:capitalize">${g}</strong>`;
+    const arr = leader[g]||[];
+    if(arr.length===0){
+      block.innerHTML += '<div class="small muted">No scores yet — play to appear here!</div>';
+    } else {
+      const ol = document.createElement('ol');
+      arr.forEach(item=>{
+        const li = document.createElement('li');
+        li.style.margin='6px 0';
+        li.textContent = `${item.name} — ${item.score} pts`;
+        ol.appendChild(li);
+      });
+      block.appendChild(ol);
+    }
+    leaderList.appendChild(block);
+  });
+}
+
+/* ====== MATH SPEED GAME ====== */
+let mathTimer = null;
+let mathTimeLeft = 30;
+let mathRoundScore = 0;
+let mathActive = false;
+
+function initMath(){
+  if(mathActive) return;
+  mathTimeLeft = 30;
+  mathRoundScore = 0;
+  mathActive = true;
+  document.getElementById('mathRoundScore').textContent = mathRoundScore;
+  document.getElementById('mathStartBtn').disabled = true;
+  generateMathQuestion();
+  mathTimer = setInterval(()=>{
+    mathTimeLeft--;
+    document.getElementById('mathTimer').textContent = mathTimeLeft + 's';
+    if(mathTimeLeft<=0) endMath();
+  },1000);
+  say('Math round started. Solve quickly!');
+}
+
+function endMath(){
+  if(!mathActive) return;
+  mathActive = false;
+  clearInterval(mathTimer);
+  document.getElementById('mathStartBtn').disabled = false;
+  say(`Round over! You scored ${mathRoundScore} points.`);
+  // save
+  state.totalScore += mathRoundScore;
+  state.sessionPoints += mathRoundScore;
+  localStorage.setItem('lp_total', state.totalScore);
+  saveScore('math', mathRoundScore);
+  updateAllUI();
+}
+
+function generateMathQuestion(){
+  // difficulty scales with sessionPoints
+  const level = Math.min(6, 2 + Math.floor(state.sessionPoints / 15));
+  const a = randInt(1, Math.pow(2,level));
+  const b = randInt(1, Math.pow(2,level));
+  const ops = ['+','-','*'];
+  const op = ops[randInt(0, ops.length-1)];
+  let ans;
+  switch(op){
+    case '+': ans = a + b; break;
+    case '-': ans = a - b; break;
+    case '*': ans = a * b; break;
+  }
+  document.getElementById('mathQ').textContent = `${a} ${op} ${b} = ?`;
+  const choices = generateChoices(ans);
+  const container = document.getElementById('mathOptions');
+  container.innerHTML = '';
+  choices.forEach(c=>{
+    const btn = document.createElement('button');
+    btn.className='option';
+    btn.textContent = c;
+    btn.addEventListener('click', ()=>{
+      if(!mathActive) return;
+      if(c === ans){
+        mathRoundScore += 10;
+        document.getElementById('mathRoundScore').textContent = mathRoundScore;
+        say('Correct! Great job.');
+        tone(880,0.06);
+      } else {
+        mathRoundScore = Math.max(0, mathRoundScore - 4);
+        say('Nice try! Keep going.');
+        tone(220,0.08);
+      }
+      generateMathQuestion();
+    });
+    container.appendChild(btn);
+  });
+}
+
+function generateChoices(correct){
+  const choices = new Set();
+  choices.add(correct);
+  while(choices.size < 4){
+    const delta = randInt(1, Math.max(2, Math.floor(Math.abs(correct)*0.4)+2));
+    const candidate = (Math.random()<0.5) ? correct + delta : correct - delta;
+    if(typeof candidate === 'number') choices.add(candidate);
+  }
+  return shuffle(Array.from(choices));
+}
+
+/* ====== VOCAB SCRAMBLE ====== */
+const vocabWords = [
+  'planet','ocean','computer','garden','library','banana','elephant','puzzle','rocket','teacher',
+  'program','pattern','valley','history','picture','creative','science','memory','culture','language'
+];
+let currentVocab = '';
+let vocabRoundScore = 0;
+let vocabAttempts = 3;
+
+function nextVocab(){
+  currentVocab = vocabWords[randInt(0,vocabWords.length-1)];
+  const scrambled = scrambleWord(currentVocab);
+  document.getElementById('scrambled').textContent = scrambled;
+  document.getElementById('vocabInput').value = '';
+  vocabAttempts = 3;
+  document.getElementById('vocabAttempts').textContent = vocabAttempts;
+}
+
+function checkVocab(){
+  const val = document.getElementById('vocabInput').value.trim().toLowerCase();
+  if(!currentVocab) { say('Click Next to start.'); return; }
+  if(val === currentVocab){
+    vocabRoundScore += 15;
+    document.getElementById('vocabScore').textContent = vocabRoundScore;
+    say('Correct! Nice vocabulary!');
+    tone(900,0.06);
+    state.totalScore += 15; state.sessionPoints += 15;
+    localStorage.setItem('lp_total', state.totalScore);
+    saveScore('vocab', 15);
+    updateAllUI();
+    // auto next
+    setTimeout(nextVocab,700);
+  } else {
+    vocabAttempts--;
+    document.getElementById('vocabAttempts').textContent = vocabAttempts;
+    say('That is not correct. Try again.');
+    tone(240,0.06);
+    if(vocabAttempts<=0){
+      say(`Out of attempts! The word was ${currentVocab}.`);
+      setTimeout(nextVocab,900);
+    }
+  }
+}
+
+/* ====== MEMORY MATCH ====== */
+const emojiPool = ['🍎','🍌','🍓','🍇','🍉','🍒','🥝','🍑','🍋','🍍','🥥','🍐','🍊','🍓','🥭','🍈'];
+let memoryPairs = [];
+let memoryState = {
+  first: null, second: null, moves: 0, matches: 0, score: 0
+};
+
+function initMemory(){
+  memoryState = {first:null, second:null, moves:0, matches:0, score:0};
+  document.getElementById('memoryMoves').textContent = 0;
+  document.getElementById('memoryScore').textContent = 0;
+  // pick 8 unique emojis
+  const picked = shuffle(Array.from(new Set(emojiPool))).slice(0,8);
+  memoryPairs = shuffle([...picked, ...picked]);
+  renderMemory();
+}
+
+function renderMemory(){
+  const grid = document.getElementById('memoryGrid');
+  grid.innerHTML = '';
+  memoryPairs.forEach((em,i)=>{
+    const tile = document.createElement('div');
+    tile.className='card-tile hidden';
+    tile.dataset.index = i;
+    tile.dataset.revealed = 'false';
+    tile.textContent = em;
+    tile.addEventListener('click', ()=> onTileClick(tile));
+    grid.appendChild(tile);
+  });
+}
+
+function onTileClick(tile){
+  if(tile.dataset.revealed === 'true' || memoryState.second) return;
+  reveal(tile);
+  if(!memoryState.first){
+    memoryState.first = tile;
+  } else {
+    memoryState.second = tile;
+    memoryState.moves++;
+    document.getElementById('memoryMoves').textContent = memoryState.moves;
+    // check match
+    const a = memoryState.first.textContent;
+    const b = memoryState.second.textContent;
+    if(a === b){
+      // matched
+      memoryState.matches++;
+      memoryState.score += 12;
+      memoryState.first.dataset.revealed = 'true';
+      memoryState.second.dataset.revealed = 'true';
+      memoryState.first.classList.remove('hidden');
+      memoryState.second.classList.remove('hidden');
+      memoryState.first.style.background = 'linear-gradient(90deg,#a8ff78,#78ffd6)';
+      memoryState.second.style.background = 'linear-gradient(90deg,#a8ff78,#78ffd6)';
+      tone(880,0.06);
+      say('Nice match!');
+      // clear
+      memoryState.first = null;
+      memoryState.second = null;
+      document.getElementById('memoryScore').textContent = memoryState.score;
+      if(memoryState.matches === memoryPairs.length/2){
+        say(`Great job! You matched all pairs and scored ${memoryState.score}`);
+        state.totalScore += memoryState.score; state.sessionPoints += memoryState.score;
+        localStorage.setItem('lp_total', state.totalScore);
+        saveScore('memory', memoryState.score);
+        updateAllUI();
+      }
+    } else {
+      // flip back after short delay
+      tone(220,0.08);
+      say('Not a match, try again.');
+      setTimeout(()=>{
+        hideTile(memoryState.first);
+        hideTile(memoryState.second);
+        memoryState.first = null;
+        memoryState.second = null;
+      },700);
+    }
+  }
+}
+
+function reveal(tile){
+  tile.classList.remove('hidden');
+  tile.style.color = '';
+  tile.dataset.revealed = 'temp';
+}
+function hideTile(tile){
+  if(!tile) return;
+  if(tile.dataset.revealed === 'true') return;
+  tile.classList.add('hidden');
+  tile.style.color = 'transparent';
+  tile.dataset.revealed = 'false';
+}
+function shuffleMemory(){
+  memoryPairs = shuffle(memoryPairs);
+  renderMemory();
+}
+
+/* ====== UTILITIES ====== */
+function randInt(a,b){ return Math.floor(Math.random()*(b-a))+a; }
+function scrambleWord(w){
+  if(w.length <= 3) return w.split('').reverse().join('');
+  const arr = w.split('');
+  let s = shuffle(arr);
+  // ensure not same
+  if(s.join('') === w) s = s.reverse();
+  return s.join('');
+}
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]] = [arr[j],arr[i]];
+  }
+  return arr;
+}
+
+/* ====== small helpers & init ====== */
+function updateAllUIStart(){
+  updateAllUI();
+  // show initial screens
+  navigateTo('home');
+  // auto init memory
+  initMemory();
+}
+updateAllUIStart();
+
+/* auto start some defaults */
+document.getElementById('mathStartBtn').addEventListener('click', ()=>{ /* handled by initMath */ });
+document.getElementById('vocabInput').addEventListener('keydown', (e)=>{ if(e.key==='Enter') checkVocab(); });
+
+/* start default vocab when open */
+nextVocab();
+
+/* small UI interactions */
+function revealCharacterEmojiForGame(game){
+  if(game === 'math'){ character.textContent = '🤖'; }
+  else if(game === 'vocab'){ character.textContent = '🐼'; }
+  else if(game === 'memory'){ character.textContent = '🧚'; }
+  else { character.textContent = '🐼' }
+}
+
+/* navigate binding to show appropriate speech */
+['math','vocab','memory','leader','home'].forEach(s=>{
+  document.querySelector(`#navMenu button[data-screen="${s}"]`).addEventListener('click', ()=>{
+    revealCharacterEmojiForGame(s);
+    if(s==='math') say('Math time! Press Start.');
+    if(s==='vocab') say('Words time! Unscramble the word.');
+    if(s==='memory') say('Memory test! Find pairs.');
+    if(s==='leader') say('Leaderboard — see top local scores.');
+    if(s==='home') say('Choose a game to begin!');
+  });
+});
+
+/* utility to end math if user navigates away */
+document.querySelectorAll('#navMenu button').forEach(b=>{
+  b.addEventListener('click', ()=>{ if(b.dataset.screen !== 'math') endMath(); });
+});
+
+/* final: small keyboard cheat: press 1,2,3 to switch games */
+document.addEventListener('keydown', (e)=>{
+  if(e.key==='1') startGame('math');
+  if(e.key==='2') startGame('vocab');
+  if(e.key==='3') startGame('memory');
+});
+
+</script>
+</body>
+</html>
+
